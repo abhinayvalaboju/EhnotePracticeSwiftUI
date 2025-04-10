@@ -25,8 +25,8 @@ enum Env {
 
 class baseURL {
     
-//    private let USABaseURLDev = "https://ehnoteehrdevapi.azurewebsites.net/api/"
     private let USABaseURLDev = "https://ehrusdevapi.azurewebsites.net/api/"
+  //  private let USABaseURLDev = "https://ehnoteehrdevapi.azurewebsites.net/api/"
     private let USABaseURLStag =  "https://ehnoteehrstageapi.azurewebsites.net/api/"
     private let USABaseURLProd =  "https://ehnoteprodehrapi.azurewebsites.net/api/"
     
@@ -40,7 +40,8 @@ class baseURL {
         if env == Env.development {
             //                        return "https://devehnoteapi.azurewebsites.net/api/"
             if(Constants.country == "India"){
-                return IndBaseURLDev
+               // return IndBaseURLDev
+                return USABaseURLDev
             } else if(Constants.country == "United States"){
                 return USABaseURLDev
             }else {
@@ -416,7 +417,7 @@ class URLS {
     let getOrganizationMedications: String = baseURL().getBaseURL() + "Patient/GetOrganizationMedications"
 }
 
-class APIManager {
+class APIRequest {
     static let shared = APIManager()
     
     class func loginAPI(params: [String: Any]?, success:@escaping (LoginResponse) -> Void, failure:@escaping (Error) -> Void) {
@@ -432,5 +433,30 @@ class APIManager {
             }
         )
     }
-        
+    
+    class func getBranchesListByIdAPI(params: [String: Any], success: @escaping(BranchListData) -> Void, failure: @escaping (Error) -> Void) {
+        RestClient.requestGETURLObject(URLS().getBranchesListByIdURL, params: params, responseType: BranchListData.self) { response in
+            success(response)
+        } failure: { error in
+            failure(error)
+        }
+
+    }
+    
+    class func getUserConsultationitemsAPI(params: [String: Any]?, success: @escaping(GetUserConsultationitemsResponse) -> Void, failure: @escaping(Error) -> Void) {
+        RestClient.requestGETURL(URLS().getUserConsultationitemsURL, params: params, responseType: GetUserConsultationitemsResponse.self) { response in
+            success(response)
+        } failure: { error in
+            failure(error)
+        }
+    }
+    
+    class func getAllWaitingRoomTypeAPI(params: [String: Any]?,success: @escaping(GetAllWaitingRoomTypeModel) -> Void, failure: @escaping(Error) -> Void) {
+        RestClient.requestGETURL(URLS().getAllWaitingRoomTypeURL, params: params, responseType: GetAllWaitingRoomTypeModel.self) { response in
+            success(response)
+        } failure: { error in
+            failure(error)
+        }
+    }
 }
+

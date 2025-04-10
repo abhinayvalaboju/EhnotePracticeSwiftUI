@@ -7,21 +7,6 @@
 
 import Foundation
 
-struct LoginRequest: Codable {
-    let UserLoginID: String
-    let UserPassword: String
-    let LoggedIn: String
-    let TypeOfDevice: String
-    let Lat: Double
-    let Lon: Double
-    let IsFromAdmin: Bool
-    let MobileDeviceManufacturer: String
-    let MobileDeviceModel: String
-    let Platform: String
-    let DeviceId: String
-    let StatusType: String
-}
-
 struct LoginResponse: Codable {
     let status: String?
     let mocCredentials: [MocCredentials]?
@@ -41,6 +26,7 @@ struct LoginResponse: Codable {
     let settingsData: SettingsData?
     var token, refreshToken, tokenExpireTime: String?
     var newHsptlList: [NHospitalList]?
+    var message: String?
     
     enum CodingKeys: String, CodingKey {
         case status = "status"
@@ -69,6 +55,19 @@ struct LoginResponse: Codable {
     }
 }
 
+// MARK: - BookAppointmentResponse
+struct TwoWayLoginResponse: Codable {
+    var status: String?
+    var isUserExist: Bool?
+    var mobileNumber: String?
+
+    enum CodingKeys: String, CodingKey {
+        case status = "Status"
+        case isUserExist = "IsUserExist"
+        case mobileNumber = "MobileNumber"
+    }
+}
+
 
 struct MocCredentials: Codable {
     let apiEndpointURL:String?
@@ -79,6 +78,7 @@ struct MocCredentials: Codable {
         case applicationURL = "ApplicationURL"
     }
 }
+
 
 struct User: Codable {
     let fullName, firstName, lastName,suffix: String?
@@ -98,7 +98,7 @@ struct User: Codable {
     let deleteIndicator: Bool?
     let active: String?
     let userType: String?
-//    let patientTagList:[HsptlEquipmentData]?
+    let patientTagList:[HsptlEquipmentData]?
     var isTwoWayVarificationInd: Bool?
     
     enum CodingKeys: String, CodingKey {
@@ -126,312 +126,19 @@ struct User: Codable {
         case deleteIndicator = "DeleteIndicator"
         case active = "Active"
         case userType = "UserType"
-//        case patientTagList = "PatientTagList"
+        case patientTagList = "PatientTagList"
         case isTwoWayVarificationInd = "IsTwoWayVarificationInd"
     }
 }
 
-
-struct UserPhone: Codable {
-    let phCntryCD, phAreaCD: String?
-    let phNumber: String?
-    let phType: String?
+struct UserAchievementElement: Codable {
+    let rowID: Int?
+    let name, indicator: String?
     
     enum CodingKeys: String, CodingKey {
-        case phCntryCD = "PhCntryCD"
-        case phAreaCD = "PhAreaCD"
-        case phNumber = "PhNumber"
-        case phType = "PhType"
-    }
-}
-
-struct UserSpecilityDetail: Codable {
-    let serialNumber, specialityID: Int?
-    let specialityDesc, subSpecialityDesc: String?
-    
-    enum CodingKeys: String, CodingKey {
-        case serialNumber = "SerialNumber"
-        case specialityID = "SpecialityID"
-        case specialityDesc = "SpecialityDesc"
-        case subSpecialityDesc = "SubSpecialityDesc"
-    }
-}
-
-struct SettingsData: Codable {
-    let diagnosisListSettings, treatmentListSettings, medicinesListSettings: [ListSetting]?
-    let printerHeaderSettings: [PrintSetting]?
-    let communicationsSettings: [CommunicationsSetting]?
-    let complaintsListSettings, observationListSettings, clinicalNotesListSettings: [ListSetting]?
-    let defaultInvTemplateSettings: [DefaultInvTemplateSetting]?
-    
-    enum CodingKeys: String, CodingKey {
-        case diagnosisListSettings = "DiagnosisListSettings"
-        case treatmentListSettings = "TreatmentListSettings"
-        case medicinesListSettings = "MedicinesListSettings"
-        case printerHeaderSettings = "PrinterHeaderSettings"
-        case communicationsSettings = "CommunicationsSettings"
-        case complaintsListSettings = "ComplaintsListSettings"
-        case observationListSettings = "ObservationListSettings"
-        case clinicalNotesListSettings = "ClinicalNotesListSettings"
-        case defaultInvTemplateSettings = "DefaultInvTemplateSettings"
-    }
-}
-
-// MARK: - ListSetting
-struct ListSetting: Codable {
-    let id: Int?
-    let name: String?
-    let type: String?
-    let status: Bool?
-    let hashKey: String?
-    
-    enum CodingKeys: String, CodingKey {
-        case id = "Id"
+        case rowID = "RowID"
         case name = "Name"
-        case type = "Type"
-        case status = "Status"
-        case hashKey = "$$hashKey"
-    }
-}
-
-// MARK: - CommunicationsSetting
-struct CommunicationsSetting: Codable {
-    let mode: String?
-    let smsSettingsObj, emailSettingObj: SettingsObject?
-   // let hashKey: String
-    
-    enum CodingKeys: String, CodingKey {
-        case mode = "Mode"
-        case smsSettingsObj = "SmsSettingsObj"
-        case emailSettingObj = "EmailSettingObj"
-        //case hashKey = "$$hashKey"
-    }
-}
-
-// MARK: - Obj
-struct SettingsObject: Codable {
-    let appointment, billing, consultation, prescription: Bool?
-    
-    enum CodingKeys: String, CodingKey {
-        case appointment = "Appointment"
-        case billing = "Billing"
-        case consultation = "Consultation"
-        case prescription = "Prescription"
-    }
-}
-
-// MARK: - DefaultInvTemplateSetting
-struct DefaultInvTemplateSetting: Codable {
-    let templateID: Int?
-    
-    enum CodingKeys: String, CodingKey {
-        case templateID = "TemplateId"
-    }
-}
-
-// MARK: - PrintSetting
-struct PrintSetting: Codable {
-    
-}
-
-
-// MARK: - User SubOrganization Data
-struct UserSubOrganization: Codable {
-    let subOrgID: Int?
-    let subOrgName: String?
-    
-    enum CodingKeys: String, CodingKey {
-        case subOrgID = "SubOrganizationId"
-        case subOrgName = "SubOrganizationName"
-    }
-}
-
-// MARK: Global Hospitals Array
-struct BranchListData: Codable {
-    var rows: [NHospitalList]?
-    var roles: [NRole]?
-    var subSpecialization: [NOrgSubSpecialities]?
-
-    enum CodingKeys: String, CodingKey {
-        case rows
-        case roles = "Roles"
-        case subSpecialization = "SubSpecialization"
-    }
-}
-
-// MARK: - Role
-struct NRole: Codable {
-    let organizationRoleID, roleID: Int?
-    let roleName: String?
-
-    enum CodingKeys: String, CodingKey {
-        case organizationRoleID = "OrganizationRoleId"
-        case roleID = "RoleId"
-        case roleName = "RoleName"
-    }
-}
-
-// MARK: - Row
-struct NHospitalList: Codable {
-    var hospitalInfo: NHospitalInfo?
-    var specialities: [NSpeciality]?
-    var subSpecialities: [NBranchSubSpecialities]?
-    var isAssignedHospital: Bool? = false
-
-    enum CodingKeys: String, CodingKey {
-        case hospitalInfo = "HospitalInfo"
-        case specialities = "Specialities"
-        case subSpecialities = "SubSpecialities"
-        case isAssignedHospital
-    }
-}
-
-// MARK: - HospitalInfo
-struct NHospitalInfo: Codable {
-    var hospitalDetails: NHospitalDetails?
-    var hospitalAddress: NHospitalAddress?
-    var hospitalPhone: [NHospitalPhone]?
-
-    enum CodingKeys: String, CodingKey {
-        case hospitalDetails = "HospitalDetails"
-        case hospitalAddress = "HospitalAddress"
-        case hospitalPhone = "HospitalPhone"
-    }
-}
-
-// MARK: - HospitalAddress
-struct NHospitalAddress: Codable {
-    var address1, address2: String?
-    var hno: String?
-    var location: String?
-    var cityID, stateID, countryID: Int?
-    var pinCode, longitude, latitude, countryName: String?
-    var stateName, cityName: String?
-    var entityTypeID: Int?
-    var entityType: String?
-
-    enum CodingKeys: String, CodingKey {
-        case address1 = "Address1"
-        case address2 = "Address2"
-        case hno = "Hno"
-        case location = "Location"
-        case cityID = "CityId"
-        case stateID = "StateId"
-        case countryID = "CountryId"
-        case pinCode = "PinCode"
-        case longitude = "Longitude"
-        case latitude = "Latitude"
-        case countryName = "CountryName"
-        case stateName = "StateName"
-        case cityName = "CityName"
-        case entityTypeID = "EntityTypeId"
-        case entityType = "EntityType"
-    }
-}
-
-// MARK: - HospitalDetails
-struct NHospitalDetails: Codable {
-    var parentOrganizationID: Int?
-    var hospitalCode: String?
-    var subOrganizationID, branchID: Int?
-    var branchName: String?
-    var organizationTypeID: Int?
-    var organizationType: String?
-    var mobileNumber: String?
-    var emailAddress, regsistrationDate, licenseNumber, tinNumber: String?
-    var feedBackURL: String?
-    var isAllowUserStockUsage: Bool?
-    var isPrintInsturctions: String?
-    var isRestrictAppointmentSlot, isSMSInd: Bool?
-    var isSurgeryCostRestricted: Bool?
-    var maxSMSCount: Int?
-    var navigationURL: String?
-    var smsPurchased: Int?
-    var smsSenderID: String?
-    var activeIND, termsAccepted, branchCode: String?
-    var isNewConsultationRestriction: Bool?
-
-    enum CodingKeys: String, CodingKey {
-        case parentOrganizationID = "ParentOrganizationId"
-        case hospitalCode = "HospitalCode"
-        case subOrganizationID = "SubOrganizationId"
-        case branchID = "BranchId"
-        case branchName = "BranchName"
-        case organizationTypeID = "OrganizationTypeId"
-        case organizationType = "OrganizationType"
-        case mobileNumber = "MobileNumber"
-        case emailAddress = "EmailAddress"
-        case regsistrationDate = "RegsistrationDate"
-        case licenseNumber = "LicenseNumber"
-        case tinNumber = "TINNumber"
-        case feedBackURL = "FeedBackURL"
-        case isAllowUserStockUsage = "IsAllowUserStockUsage"
-        case isPrintInsturctions = "IsPrintInsturctions"
-        case isRestrictAppointmentSlot = "IsRestrictAppointmentSlot"
-        case isSMSInd = "IsSMSInd"
-        case isSurgeryCostRestricted = "IsSurgeryCostRestricted"
-        case maxSMSCount = "MaxSMSCount"
-        case navigationURL = "NavigationURL"
-        case smsPurchased = "SMSPurchased"
-        case smsSenderID = "SMSSenderId"
-        case activeIND = "ActiveIND"
-        case termsAccepted = "TermsAccepted"
-        case branchCode = "BranchCode"
-        case isNewConsultationRestriction = "IsNewConsultationRestriction"
-    }
-}
-
-// MARK: - HospitalPhone
-struct NHospitalPhone: Codable {
-    var phCntryCD, phAreaCD: String?
-    var phNumber: String?
-    var phType: String?
-
-    enum CodingKeys: String, CodingKey {
-        case phCntryCD = "PhCntryCD"
-        case phAreaCD = "PhAreaCD"
-        case phNumber = "PhNumber"
-        case phType = "PhType"
-    }
-}
-
-// MARK: - Speciality
-struct NSpeciality: Codable {
-    let branchOrgSpecializationID, specializationID: Int?
-    let specializationName: String?
-
-    enum CodingKeys: String, CodingKey {
-        case branchOrgSpecializationID = "BranchOrgSpecializationId"
-        case specializationID = "SpecializationId"
-        case specializationName = "SpecializationName"
-    }
-}
-
-// MARK: - Branch Sub Speciality
-struct NBranchSubSpecialities: Codable {
-    var branchSubSpecializationID, subSpecializationID: Int?
-    var subSpecializationName: String?
-    var specializationID: Int?
-    var isPrimarySubSpec: Bool?
-
-    enum CodingKeys: String, CodingKey {
-        case branchSubSpecializationID = "BranchSubSpecializationId"
-        case subSpecializationID = "SubSpecializationId"
-        case subSpecializationName = "SubSpecializationName"
-        case specializationID = "SpecializationId"
-        case isPrimarySubSpec = "IsPrimarySubSpecialization"
-    }
-}
-
-// MARK: - Organization Sub Speciality
-struct NOrgSubSpecialities: Codable {
-    let orgSubSpecializationID, subSpecializationID: Int?
-    let subSpecializationName: String?
-
-    enum CodingKeys: String, CodingKey {
-        case orgSubSpecializationID = "OrgSubSpecializationId"
-        case subSpecializationID = "SubSpecializationId"
-        case subSpecializationName = "SubSpecializationName"
+        case indicator = "Indicator"
     }
 }
 
@@ -781,16 +488,340 @@ struct UserOtherDetails: Codable {
     }
 }
 
-struct UserAchievementElement: Codable {
-    let rowID: Int?
-    let name, indicator: String?
+struct UserPhone: Codable {
+    let phCntryCD, phAreaCD: String?
+    let phNumber: String?
+    let phType: String?
     
     enum CodingKeys: String, CodingKey {
-        case rowID = "RowID"
-        case name = "Name"
-        case indicator = "Indicator"
+        case phCntryCD = "PhCntryCD"
+        case phAreaCD = "PhAreaCD"
+        case phNumber = "PhNumber"
+        case phType = "PhType"
     }
 }
+
+struct UserSpecilityDetail: Codable {
+    let serialNumber, specialityID: Int?
+    let specialityDesc, subSpecialityDesc: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case serialNumber = "SerialNumber"
+        case specialityID = "SpecialityID"
+        case specialityDesc = "SpecialityDesc"
+        case subSpecialityDesc = "SubSpecialityDesc"
+    }
+}
+
+struct SettingsData: Codable {
+    let diagnosisListSettings, treatmentListSettings, medicinesListSettings: [ListSetting]?
+    let printerHeaderSettings: [PrintSetting]?
+    let communicationsSettings: [CommunicationsSetting]?
+    let complaintsListSettings, observationListSettings, clinicalNotesListSettings: [ListSetting]?
+    let defaultInvTemplateSettings: [DefaultInvTemplateSetting]?
+    
+    enum CodingKeys: String, CodingKey {
+        case diagnosisListSettings = "DiagnosisListSettings"
+        case treatmentListSettings = "TreatmentListSettings"
+        case medicinesListSettings = "MedicinesListSettings"
+        case printerHeaderSettings = "PrinterHeaderSettings"
+        case communicationsSettings = "CommunicationsSettings"
+        case complaintsListSettings = "ComplaintsListSettings"
+        case observationListSettings = "ObservationListSettings"
+        case clinicalNotesListSettings = "ClinicalNotesListSettings"
+        case defaultInvTemplateSettings = "DefaultInvTemplateSettings"
+    }
+}
+
+// MARK: - ListSetting
+struct ListSetting: Codable {
+    let id: Int?
+    let name: String?
+    let type: String?
+    let status: Bool?
+    let hashKey: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case id = "Id"
+        case name = "Name"
+        case type = "Type"
+        case status = "Status"
+        case hashKey = "$$hashKey"
+    }
+}
+
+// MARK: - CommunicationsSetting
+struct CommunicationsSetting: Codable {
+    let mode: String?
+    let smsSettingsObj, emailSettingObj: SettingsObject?
+   // let hashKey: String
+    
+    enum CodingKeys: String, CodingKey {
+        case mode = "Mode"
+        case smsSettingsObj = "SmsSettingsObj"
+        case emailSettingObj = "EmailSettingObj"
+        //case hashKey = "$$hashKey"
+    }
+}
+
+// MARK: - Obj
+struct SettingsObject: Codable {
+    let appointment, billing, consultation, prescription: Bool?
+    
+    enum CodingKeys: String, CodingKey {
+        case appointment = "Appointment"
+        case billing = "Billing"
+        case consultation = "Consultation"
+        case prescription = "Prescription"
+    }
+}
+
+// MARK: - DefaultInvTemplateSetting
+struct DefaultInvTemplateSetting: Codable {
+    let templateID: Int?
+    
+    enum CodingKeys: String, CodingKey {
+        case templateID = "TemplateId"
+    }
+}
+
+// MARK: - PrintSetting
+struct PrintSetting: Codable {
+    
+}
+
+
+// MARK: - User SubOrganization Data
+struct UserSubOrganization: Codable {
+    let subOrgID: Int?
+    let subOrgName: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case subOrgID = "SubOrganizationId"
+        case subOrgName = "SubOrganizationName"
+    }
+}
+
+// MARK: Global Hospitals Array
+struct BranchListData: Codable {
+    var rows: [NHospitalList]?
+    var roles: [NRole]?
+    var subSpecialization: [NOrgSubSpecialities]?
+
+    enum CodingKeys: String, CodingKey {
+        case rows
+        case roles = "Roles"
+        case subSpecialization = "SubSpecialization"
+    }
+}
+
+// MARK: - Role
+struct NRole: Codable {
+    let organizationRoleID, roleID: Int?
+    let roleName: String?
+
+    enum CodingKeys: String, CodingKey {
+        case organizationRoleID = "OrganizationRoleId"
+        case roleID = "RoleId"
+        case roleName = "RoleName"
+    }
+}
+
+// MARK: - Row
+struct NHospitalList: Codable {
+    var hospitalInfo: NHospitalInfo?
+    var specialities: [NSpeciality]?
+    var subSpecialities: [NBranchSubSpecialities]?
+    var isAssignedHospital: Bool? = false
+
+    enum CodingKeys: String, CodingKey {
+        case hospitalInfo = "HospitalInfo"
+        case specialities = "Specialities"
+        case subSpecialities = "SubSpecialities"
+        case isAssignedHospital
+    }
+}
+
+// MARK: - HospitalInfo
+struct NHospitalInfo: Codable {
+    var hospitalDetails: NHospitalDetails?
+    var hospitalAddress: NHospitalAddress?
+    var hospitalPhone: [NHospitalPhone]?
+
+    enum CodingKeys: String, CodingKey {
+        case hospitalDetails = "HospitalDetails"
+        case hospitalAddress = "HospitalAddress"
+        case hospitalPhone = "HospitalPhone"
+    }
+}
+
+// MARK: - HospitalAddress
+struct NHospitalAddress: Codable {
+    var address1, address2: String?
+    var hno: String?
+    var location: String?
+    var cityID, stateID, countryID: Int?
+    var pinCode, longitude, latitude, countryName: String?
+    var stateName, cityName: String?
+    var entityTypeID: Int?
+    var entityType: String?
+
+    enum CodingKeys: String, CodingKey {
+        case address1 = "Address1"
+        case address2 = "Address2"
+        case hno = "Hno"
+        case location = "Location"
+        case cityID = "CityId"
+        case stateID = "StateId"
+        case countryID = "CountryId"
+        case pinCode = "PinCode"
+        case longitude = "Longitude"
+        case latitude = "Latitude"
+        case countryName = "CountryName"
+        case stateName = "StateName"
+        case cityName = "CityName"
+        case entityTypeID = "EntityTypeId"
+        case entityType = "EntityType"
+    }
+}
+
+// MARK: - HospitalDetails
+struct NHospitalDetails: Codable {
+    var parentOrganizationID: Int?
+    var hospitalCode: String?
+    var subOrganizationID, branchID: Int?
+    var branchName: String?
+    var organizationTypeID: Int?
+    var organizationType: String?
+    var mobileNumber: String?
+    var emailAddress, regsistrationDate, licenseNumber, tinNumber: String?
+    var feedBackURL: String?
+    var isAllowUserStockUsage: Bool?
+    var isPrintInsturctions: String?
+    var isRestrictAppointmentSlot, isSMSInd: Bool?
+    var isSurgeryCostRestricted: Bool?
+    var maxSMSCount: Int?
+    var navigationURL: String?
+    var smsPurchased: Int?
+    var smsSenderID: String?
+    var activeIND, termsAccepted, branchCode: String?
+    var isNewConsultationRestriction: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case parentOrganizationID = "ParentOrganizationId"
+        case hospitalCode = "HospitalCode"
+        case subOrganizationID = "SubOrganizationId"
+        case branchID = "BranchId"
+        case branchName = "BranchName"
+        case organizationTypeID = "OrganizationTypeId"
+        case organizationType = "OrganizationType"
+        case mobileNumber = "MobileNumber"
+        case emailAddress = "EmailAddress"
+        case regsistrationDate = "RegsistrationDate"
+        case licenseNumber = "LicenseNumber"
+        case tinNumber = "TINNumber"
+        case feedBackURL = "FeedBackURL"
+        case isAllowUserStockUsage = "IsAllowUserStockUsage"
+        case isPrintInsturctions = "IsPrintInsturctions"
+        case isRestrictAppointmentSlot = "IsRestrictAppointmentSlot"
+        case isSMSInd = "IsSMSInd"
+        case isSurgeryCostRestricted = "IsSurgeryCostRestricted"
+        case maxSMSCount = "MaxSMSCount"
+        case navigationURL = "NavigationURL"
+        case smsPurchased = "SMSPurchased"
+        case smsSenderID = "SMSSenderId"
+        case activeIND = "ActiveIND"
+        case termsAccepted = "TermsAccepted"
+        case branchCode = "BranchCode"
+        case isNewConsultationRestriction = "IsNewConsultationRestriction"
+    }
+}
+
+// MARK: - HospitalPhone
+struct NHospitalPhone: Codable {
+    var phCntryCD, phAreaCD: String?
+    var phNumber: String?
+    var phType: String?
+
+    enum CodingKeys: String, CodingKey {
+        case phCntryCD = "PhCntryCD"
+        case phAreaCD = "PhAreaCD"
+        case phNumber = "PhNumber"
+        case phType = "PhType"
+    }
+}
+
+// MARK: - Speciality
+struct NSpeciality: Codable {
+    let branchOrgSpecializationID, specializationID: Int?
+    let specializationName: String?
+
+    enum CodingKeys: String, CodingKey {
+        case branchOrgSpecializationID = "BranchOrgSpecializationId"
+        case specializationID = "SpecializationId"
+        case specializationName = "SpecializationName"
+    }
+}
+
+// MARK: - Branch Sub Speciality
+struct NBranchSubSpecialities: Codable {
+    var branchSubSpecializationID, subSpecializationID: Int?
+    var subSpecializationName: String?
+    var specializationID: Int?
+    var isPrimarySubSpec: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case branchSubSpecializationID = "BranchSubSpecializationId"
+        case subSpecializationID = "SubSpecializationId"
+        case subSpecializationName = "SubSpecializationName"
+        case specializationID = "SpecializationId"
+        case isPrimarySubSpec = "IsPrimarySubSpecialization"
+    }
+}
+
+// MARK: - Organization Sub Speciality
+struct NOrgSubSpecialities: Codable {
+    let orgSubSpecializationID, subSpecializationID: Int?
+    let subSpecializationName: String?
+
+    enum CodingKeys: String, CodingKey {
+        case orgSubSpecializationID = "OrgSubSpecializationId"
+        case subSpecializationID = "SubSpecializationId"
+        case subSpecializationName = "SubSpecializationName"
+    }
+}
+
+/*// MARK: - UserAccess Details
+struct NUserAccessDetails: Codable {
+    var accessCatID: Int?
+    var accessCatName: String?
+    var activeIND: String?
+    var accessList: [NAccessList]?
+    var isAllCategoryItemSelected: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case accessCatID = "AccessCategoryId"
+        case accessCatName = "AccessCategoryName"
+        case activeIND = "ActiveInd"
+        case accessList = "AccessList"
+        case isAllCategoryItemSelected = "isAllCategoryItemsSelected"
+    }
+}
+
+// MARK: - Access List
+struct NAccessList: Codable {
+    var accessRightID: Int?
+    var accessRightName: String?
+    var accessCatID: Int?
+    var activeIND: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case accessRightID = "AccessRightId"
+        case accessRightName = "AccessRightName"
+        case accessCatID = "AccessCategoryId"
+        case activeIND = "ActiveInd"
+    }
+}*/
 
 // MARK: - Language
 struct Language: Codable {
@@ -800,5 +831,57 @@ struct Language: Codable {
     enum CodingKeys: String, CodingKey {
         case language = "Language"
         case translateName
+    }
+}
+
+struct HsptlEquipmentData: Codable {
+    let hsptlEquipID: Int?
+    let hsptlEquipName: String?
+    var isSelected = false
+    
+    enum CodingKeys: String, CodingKey {
+        case hsptlEquipID = "HospitalEquipmentId"
+        case hsptlEquipName = "HospitalEquipmentName"
+    }
+}
+
+// MARK: - GetAllWaitingRoomType
+struct GetAllWaitingRoomTypeModel: Codable {
+    var id: Int?
+    var name: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id = "Id"
+        case name = "Name"
+    }
+}
+
+// MARK: - Welcome
+struct GetWaitingRoomListModel: Codable {
+    var status: String?
+    var rows: [GetWaitingRoomListRow]?
+
+    enum CodingKeys: String, CodingKey {
+        case status = "Status"
+        case rows
+    }
+}
+
+// MARK: - Row
+struct GetWaitingRoomListRow: Codable {
+    var roomID, roomTypeID: Int?
+    var roomType, roomName: String?
+    var roomCapacity, roomAvailability, hospitalID: Int?
+    var hospitalName: String?
+
+    enum CodingKeys: String, CodingKey {
+        case roomID = "RoomId"
+        case roomTypeID = "RoomTypeId"
+        case roomType = "RoomType"
+        case roomName = "RoomName"
+        case roomCapacity = "RoomCapacity"
+        case roomAvailability = "RoomAvailability"
+        case hospitalID = "HospitalId"
+        case hospitalName = "HospitalName"
     }
 }

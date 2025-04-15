@@ -118,12 +118,11 @@ class LoginViewModel: ObservableObject {
         })
     }
     
-    func getUserConsultationitems() {
+    func getAllWaitingRoomList() {
         self.isLoading = true
         APIRequest.getAllWaitingRoomTypeAPI(params: [:]) { [weak self] response in
             DispatchQueue.main.async {
                 self?.isLoading = false
-                // Wrap the response in an array if your property expects an array
                 self?.getAllWaitingRoomListArr = [response]
             }
         } failure: { error in

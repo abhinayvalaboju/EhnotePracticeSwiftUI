@@ -14,118 +14,119 @@ struct LoginView: View {
     @State private var isPasswordVisible = false
     @State private var showAlert = false
     @State private var alertMessage = ""
-    @State private var shouldNavigateToConfigureUser = false
+    @State private var showConfigureUserView = false // Changed from shouldNavigateToConfigureUser
     @StateObject private var loginVM = LoginViewModel()
+    @State private var shouldNavigateToConfigureUser = false
     
     var body: some View {
-        NavigationStack {  // Wrap in NavigationStack for navigation
-            ZStack {
-                Image("Splash_Dots")
+        ZStack {
+            Image("Splash_Dots")
+                .resizable()
+                .ignoresSafeArea()
+            
+            VStack(spacing: 20) {
+                // Logo and header
+                Image("EhnoteWhiteLogo")
                     .resizable()
-                    .ignoresSafeArea()
+                    .frame(width: 60, height: 60)
+                    .padding()
+                Image("LoginHeaderLogo")
+                    .resizable()
+                    .frame(width: 180, height: 60)
                 
-                VStack(spacing: 20) {
-                    // Logo and header
-                    Image("EhnoteWhiteLogo")
-                        .resizable()
-                        .frame(width: 60, height: 60)
-                        .padding()
-                    Image("LoginHeaderLogo")
-                        .resizable()
-                        .frame(width: 180, height: 60)
-                    
-                    // Form
-                    VStack(spacing: 16) {
-                        // Email field
-                        TextField("Email", text: $email)
-                            .padding()
-                            .frame(height: 50)
-                            .background(Color.white)
-                            .cornerRadius(5)
-                            .autocapitalization(.none)
-                            .keyboardType(.emailAddress)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 5)
-                                    .stroke(Color.gray.opacity(0.5), lineWidth: 1)
-                            )
-                        
-                        // Password field with show/hide toggle
-                        HStack {
-                            if isPasswordVisible {
-                                TextField("Password", text: $password)
-                            } else {
-                                SecureField("Password", text: $password)
-                            }
-                            
-                            Button(action: {
-                                isPasswordVisible.toggle()
-                            }) {
-                                Text(isPasswordVisible ? "HIDE" : "SHOW")
-                                    .foregroundColor(.black)
-                                    .fontWeight(.bold)
-                            }
-                        }
+                // Form
+                VStack(spacing: 16) {
+                    // Email field
+                    TextField("Email", text: $email)
                         .padding()
                         .frame(height: 50)
                         .background(Color.white)
                         .cornerRadius(5)
+                        .autocapitalization(.none)
+                        .keyboardType(.emailAddress)
                         .overlay(
                             RoundedRectangle(cornerRadius: 5)
                                 .stroke(Color.gray.opacity(0.5), lineWidth: 1)
                         )
-                        
-                        // Login Button
-                        Button(action: {
-                            if email.isEmpty || password.isEmpty {
-                                alertMessage = "Please enter both email and password"
-                                showAlert = true
-                            } else if !Constants.isValidEmail(email: email) {  // Fixed condition
-                                alertMessage = "Please enter a valid email address"
-                                showAlert = true
-                            } else {
-                                login()
-                            }
-                        }) {
-                            if loginVM.isLoading {
-                                ProgressView()
-                                    .tint(.white)
-                            } else {
-                                Text("LOGIN")
-                                    .frame(maxWidth: .infinity, minHeight: 50)
-                            }
+                    
+                    // Password field with show/hide toggle
+                    HStack {
+                        if isPasswordVisible {
+                            TextField("Password", text: $password)
+                        } else {
+                            SecureField("Password", text: $password)
                         }
-                        .background(Color(red: 24/255, green: 63/255, blue: 60/255))
-                        .foregroundColor(.white)
-                        .fontWeight(.bold)
-                        .cornerRadius(5)
-                        .disabled(loginVM.isLoading)
                         
-                        Spacer()
-                        
-                        // Help button
                         Button(action: {
-                            // Help action
+                            isPasswordVisible.toggle()
                         }) {
-                            HStack(spacing: 5) {
-                                Text("Need Help")
-                                Image(systemName: "questionmark.circle")
-                            }
-                            .foregroundColor(Color(red: 24/255, green: 63/255, blue: 60/255))
+                            Text(isPasswordVisible ? "HIDE" : "SHOW")
+                                .foregroundColor(.black)
+                                .fontWeight(.bold)
                         }
-                        .padding(.top, 20)
                     }
                     .padding()
+                    .frame(height: 50)
                     .background(Color.white)
+                    .cornerRadius(5)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 5)
+                            .stroke(Color.gray.opacity(0.5), lineWidth: 1)
+                    )
+                    
+                    // Login Button
+                    Button(action: {
+                        if email.isEmpty || password.isEmpty {
+                            alertMessage = "Please enter both email and password"
+                            showAlert = true
+                        } else if !Constants.isValidEmail(email: email) {
+                            alertMessage = "Please enter a valid email address"
+                            showAlert = true
+                        } else {
+                            login()
+                        }
+                    }) {
+                        if loginVM.isLoading {
+                            ProgressView()
+                                .tint(.white)
+                        } else {
+                            Text("LOGIN")
+                                .frame(maxWidth: .infinity, minHeight: 50)
+                        }
+                    }
+                    .background(Color(red: 24/255, green: 63/255, blue: 60/255))
+                    .foregroundColor(.white)
+                    .fontWeight(.bold)
+                    .cornerRadius(5)
+                    .disabled(loginVM.isLoading)
+                    
+                    Spacer()
+                    
+                    // Help button
+                    Button(action: {
+                        // Help action
+                    }) {
+                        HStack(spacing: 5) {
+                            Text("Need Help")
+                            Image(systemName: "questionmark.circle")
+                        }
+                        .foregroundColor(Color(red: 24/255, green: 63/255, blue: 60/255))
+                    }
+                    .padding(.top, 20)
                 }
-            }
-            .background(Color(red: 24/255, green: 63/255, blue: 60/255).ignoresSafeArea())
-            .alert(isPresented: $showAlert) {
-                Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
-            }
-            .navigationDestination(isPresented: $shouldNavigateToConfigureUser) {
-                ConfigureUserView()
+                .padding()
+                .background(Color.white)
             }
         }
+        .background(Color(red: 24/255, green: 63/255, blue: 60/255).ignoresSafeArea())
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+        }
+        .navigationDestination(isPresented: $shouldNavigateToConfigureUser) {
+                   ConfigureUserView()
+                .navigationBarBackButtonHidden(true)
+                .navigationBarHidden(true)
+               }
     }
     
     func login() {
@@ -152,7 +153,7 @@ struct LoginView: View {
         }
     }
     
-  func navigateToAppointments(data: LoginResponse?) {
+    func navigateToAppointments(data: LoginResponse?) {
         if data == nil {
             alertMessage = "Invalid response data"
             showAlert = true
@@ -165,11 +166,9 @@ struct LoginView: View {
            userAddresses.count == 1 {
             
             if let roleID = userAddresses[0].roleID {
-                // Your role ID checks
                 let authorizedRoles: Set<Int> = [1, 2, 4, 10, 11, 15, 16, 18, 19, 21, 43, 48, 62, 63, 64, 65, 66, 67, 68, 69, 71, 30, 8, 25, 73, 38]
                 
                 if authorizedRoles.contains(roleID) {
-                    // Save all the data
                     let subOrgID = userSubOrgs[0].subOrgID ?? 0
                     let hospID = userAddresses[0].extDetails?.hospitalInfo?.hospitalID ?? 0
                     let branch = userAddresses[0].clinicName ?? ""
@@ -179,7 +178,6 @@ struct LoginView: View {
                     let hospStateID = userAddresses[0].stateID
                     let hospCountryID = userAddresses[0].countryID
                     
-                    // Save to Constants
                     Constants.selSubOrgID = subOrgID
                     Constants.selHospID = hospID
                     Constants.selHospName = branch
@@ -189,7 +187,6 @@ struct LoginView: View {
                     Constants.selHospStateID = hospStateID
                     Constants.selHospCountryID = hospCountryID
                     
-                    // Save to UserDefaults
                     UserDefaults.standard.set(subOrgID, forKey: Constants.selectedSubOrganizationID)
                     UserDefaults.standard.set(hospID, forKey: Constants.selectedHospitalID)
                     UserDefaults.standard.set(branch, forKey: Constants.selectedBranchName)
@@ -203,6 +200,7 @@ struct LoginView: View {
                     
                     fetchBranches(userSubOrgs: userSubOrgs)
                     loginVM.getUserConsultationitems(userId: Constants.globalLoginResponse?.user?[0].doctorID ?? 0, hospitalId: (Constants.selHospID ?? 0))
+                    loginVM.getAllWaitingRoomList()
                    
                 } else {
                     alertMessage = "You are not authorized to access"
@@ -210,8 +208,7 @@ struct LoginView: View {
                 }
             }
         } else {
-            // Navigate to configure user screen
-           // shouldNavigateToConfigureUser = true
+            shouldNavigateToConfigureUser = true
         }
     }
     
@@ -272,7 +269,6 @@ struct LoginView: View {
         UserDefaults.standard.set(true, forKey: Constants.loginStatus)
         UserDefaults.standard.set(email, forKey: Constants.emailID)
         UserDefaults.standard.set(password, forKey: Constants.password)
-        
     }
 }
 

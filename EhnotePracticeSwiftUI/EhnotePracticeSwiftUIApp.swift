@@ -10,13 +10,17 @@ import SwiftUI
 @main
 struct EhnotePracticeSwiftUIApp: App {
     var isLoggedIn: Bool = UserDefaults.standard.bool(forKey: "LoginStatus")
+    
     var body: some Scene {
         WindowGroup {
-//            if isLoggedIn {
-//                ConfigureUserView()
-//            }else{
-                LoginView()
-//            }
+            NavigationStack {
+                if isLoggedIn {
+                    ConfigureUserView()
+                        .navigationBarHidden(true)
+                } else {
+                    LoginView()
+                }
+            }
         }
     }
 }
